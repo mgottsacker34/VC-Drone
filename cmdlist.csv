@@ -1,0 +1,6 @@
+arm:cmd arm
+launch:cmd launch
+take off:cmd take off
+disarm:cmd disarm
+hover:cmd hover
+land:cmd land
