@@ -1,45 +1,40 @@
 #################################################
-###    Text to drone Client    ###
-### Jiao ###
+###    VC-Drone Client                        ###
+###                                           ###
 ### St Louis University, Computer Science Dep.###
-###                ###
+###                                           ###
 #################################################
-
 import socket
 import sys
 
-##Client##
-#GLOBAL VARs#
-
 version = '0.1'
 IP = 'localhost'
-port = 10001
+
+try:
+    port = int(sys.argv[1])
+except:
+    print "Error: Enter a valid port number as first argument.\nFor example, `python controller.py 10000`."
+if port < 1 or port > 65535:
+    print "Error: Enter a valid port number (1-65535) as first argument.\nFor example, `python controller.py 10000`."
 
 server_address = (IP, port)
-#Controller = 'Ryu'
 
 Identity = 'Controller'
-Name = "Holly's Macbook"
+Name = 'C1'
 
 #ACTIONS#
 Order = 'order'
 SyncList = 'sync list'
 
-
-
-
 #NOTATION#
-spliter = '/'
-spliterO = '|'
-
-
+splitter = '/'
+splitterO = '|'
 
 #HEADER#
 Action = 'ACT'
 Handshake = 'HSK'
 Quit = 'QUT'
 Reply = 'RPL'
-
 
 #Reply Stutas#
 replyRetry = 'RETRY'
@@ -50,25 +45,17 @@ replyFail = 'FAIL'
 Order = 'order'
 #Update = 'update'
 
-#DroneName = 'DroneName'
-'''
-FeatureContent = 'featureContent'
-
-Blacklist = 'blacklist'
-Whitelist = 'whitelist'
-'''
-
 #####HELPER FUNCTIONS####
 
-def sp(list,spliter):
-    #put list of items into a string with spliters  
+def sp(list,splitter):
+    #put list of items into a string with splitters
     temp=''
     for i in list:
-        temp = temp+i + spliter
-    return temp[:-len(spliter)]
+        temp = temp+i + splitter
+    return temp[:-len(splitter)]
 
 def handshakeMessage():
-    return sp([version,Identity, Name],spliter)
+    return sp([version,Identity, Name],splitter)
 
 def isHandshake(message):
     if message[0] == Handshake:
@@ -76,16 +63,16 @@ def isHandshake(message):
             welcome()
             return True
         else:
-            print 'Handshake Fail'
+            print 'Handshake fail.'
             return False
 
 def welcome():
-    print '#'*53
-    print '###     Welcom to Text2Drone!                   ###'
+    print '#'*51
+    print '###     Welcome to VC-Drone!                    ###'
     print '###      -- Order the drone from plain English! ###'
-    print '#'*53
+    print '#'*51
 
-def printResult(result): 
+def printResult(result):
     #print result from server
     print '=====Server replied message====='
     print result
@@ -97,7 +84,6 @@ def actionMessage():
     print '-'*60
     #while action != Create and action != Alter  and action != Execute and action != 'quit' and action!=SyncList:
     while inp != 'o' and inp != 'q': #and inp != 'u':
-        #action = raw_input("What is the action that you want to do?\n( execute / create feature / alter feature / sync list / quit ):\n")
         inp = raw_input("What do you want to do?\n( o (order) / q (quit) ):\n")
         if inp == 'o':
             action = Order
@@ -107,50 +93,14 @@ def actionMessage():
     if action == Quit:
         return QUT
     elif action == Order:# or action ==  Update:
-        return sp([Action,action,raw_input('For the drone: '), raw_input('Order: ')], spliter)
-    '''
-    elif action == SyncList:
-        List = ''
-        op = ''
-        while (List != Blacklist or List!= Whitelist) and ( op!= 'add' and op!='remove'):
-            listOpTemp = raw_input("Enter in this format: {blacklist/whitelist} {add/remove} {ip address}: \n")
-            listOp =listOpTemp.split()
-            if len(listOp)!=3:
-                continue
-            #print listOp
-            List = listOp[0]
-            op = listOp[1]
-            ip = listOp[2]
-        if op == 'add':
-            content = 'A' + '|' + ip
-        else:
-            content = 'R' + '|' + ip
-        return sp([Action,action,List,content],spliter) 
-    '''
+        return sp([Action,action,raw_input('For the drone: '), raw_input('Order: ')], splitter)
 
 def actionRetry(warning):
     print '--Server message--'
     print warning
     return actionMessage()
-'''
-def featureInput(name): #return a string for feture file input
-
-    feature = raw_input("Feature: ")
-    scenario = raw_input("Scenario: ")
-    given = raw_input("Given: ")
-    when = raw_input("When: ")
-    then = raw_input("Then: ")
-
-    return sp([name,feature,scenario,given,when,then],spliterF)
-
-
-def featureMessage(action,name):
-    return sp([Action,action,FeatureContent,featureInput(name)],spliter)
-
-'''
 
 while True:
-    ###START###
     # Create a TCP/IP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -160,36 +110,32 @@ while True:
     #Sending handshake message
     HasBeenHandshake = False
     sock.sendall(handshakeMessage())
-    print "hs sent"
+    print "Handshake sent."
 
     try:
         ###LISTENING###
         while True:
-            #print "lalala"
             message = sock.recv(10000)
-            print message
 
             if message:
-                buff = message.split(spliter)
+                print "Received message: " + message
+                buff = message.split(splitter)
 
                 ##Whenever received Fail, quit
-                if buff[0]== replyFail:
+                if buff[0] == replyFail:
                     break
 
-                
                 ###LISTEN FOR HANDSHAKE###
                 if HasBeenHandshake == False:
                     if isHandshake(buff)==True:
                         HasBeenHandshake = True
-
-
                         sock.sendall(actionMessage())
                         continue
                     else:
                         print 'retry handshake'
                         sock.sendall(handshakeMessage())
                         continue
-                
+
                 ###LISTEN FOR Action Message Reply###
                 ##Action Type, ContentType, Reply Type, Result/Warning
                 elif buff[0]== Reply:
@@ -205,45 +151,19 @@ while True:
                             continue
                         else:
                             break
-                        
+
                         continue
                     elif buff[1]==Order:
                         printResult(buff[4])
                         sock.sendall(actionMessage())
                         continue
-                    '''
-                    elif buff[1] == SyncList:
-                        printResult(buff[4])
-                        sock.sendall(actionMessage())
-                        continue
-                    elif (buff[1]== Create or Alter):
-                        if buff[2] ==ServiceName:
-                            if buff[3]== replyRetry:
-                                sock.sendall(actionRetry(buff[4]+buff[5]))
-                            elif buff[3] == replySuccess:
-                                printResult(buff[5])
-                                sock.sendall(featureMessage(buff[1],buff[4]))
-                            else:
-                                break
-                            continue
-                        elif buff[2] == FeatureContent:
-                            if buff[3]== replyRetry:
-                                printResult(buff[5])
-                                sock.sendall(featureMessage(buff[1],buff[4]))
-                                continue
-                            elif buff[3] == replySuccess:
-                                printResult(buff[5])
-                                sock.sendall(actionMessage())
-                                continue
-                    '''
-
             else:
                 ##TERMINATION##
                 print 'nothing recvd'
                 break
 
     finally:
-        print >>sys.stderr, 'Controller '+ Name + ' is Closing, Bye!'
+        print >>sys.stderr, 'Controller '+ Name + ' is closing.'
         sock.sendall(Quit)
         sock.close()
         break
