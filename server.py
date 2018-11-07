@@ -31,8 +31,10 @@ try:
   port = int(sys.argv[1])
 except:
   print 'Error: Enter a valid port number as first argument.\nFor example, `python server.py 10000`.'
+  sys.exit(-1)
 if port < 1 or port > 65535:
   print 'Error: Enter a valid port number (1-65535) as first argument.\nFor example, `python server.py 10000`.'
+  sys.exit(-1)
 
 #CITATIONs#
 splitter = '/'
@@ -130,6 +132,7 @@ def ordernlp(line):
   i = 0
   for token in doc:
     #if token.lemma_ == 'arm' or token.lemma_=='launch' or token.pos_ == 'VERB':
+    print token.pos_
     if token.pos_ =='NOUN' or token.pos_=='VERB':
       l.append(cmdDict[token.lemma_])
     i = i+1

@@ -14,8 +14,10 @@ try:
   port = int(sys.argv[1])
 except:
   print 'Error: Enter a valid port number as first argument.\nFor example, `python controller.py 10000`.'
+  sys.exit(-1)
 if port < 1 or port > 65535:
   print 'Error: Enter a valid port number (1-65535) as first argument.\nFor example, `python controller.py 10000`.'
+  sys.exit(-1)
 
 server_address = (IP, port)
 

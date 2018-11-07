@@ -14,6 +14,15 @@ connection_string = sitl.connection_string()
 # Import DroneKit-Python
 from dronekit import connect, VehicleMode
 
+try:
+  port = int(sys.argv[1])
+except:
+  print 'Error: Enter a valid port number as first argument.\nFor example, `python drone-sim.py 10000`.'
+  sys.exit(-1)
+if port < 1 or port > 65535:
+  print 'Error: Enter a valid port number (1-65535) as first argument.\nFor example, `python drone-sim.py 10000`.'
+  sys.exit(-1)
+
 # Connect to the Vehicle.
 print('Connecting to vehicle on: %s' % (connection_string,))
 vehicle = connect(connection_string, wait_ready=True)
@@ -21,12 +30,6 @@ vehicle = connect(connection_string, wait_ready=True)
 version = '0.1'
 IP = 'localhost'
 
-try:
-  port = int(sys.argv[1])
-except:
-  print 'Error: Enter a valid port number as first argument.\nFor example, `python drone-sim.py 10000`.'
-if port < 1 or port > 65535:
-  print 'Error: Enter a valid port number (1-65535) as first argument.\nFor example, `python drone-sim.py 10000`.'
 
 server_address = (IP, port)
 
