@@ -116,7 +116,7 @@ def drone_takeoff(aTargetAltitude = 15):
   # Otherwise, the command after Vehicle.simple_takeoff will execute immediately.
   while True:
     print ' Altitude: ', vehicle.location.global_relative_frame.alt
-    if vehicle.location.global_relative_frame.al>=aTargetAltitude*0.95:
+    if vehicle.location.global_relative_frame.alt>=aTargetAltitude*0.95:
       print 'Reached target altitude'
       break
     time.sleep(1)

@@ -6,7 +6,7 @@ This file is a place for any thoughts or notes along the development process. Th
 
 ##### [DroneKit](http://python.dronekit.io/develop)
 
-Current setup: DroneKit runs on a Raspberry Pi onboard the drone itself. The RPis communicates with the Pixhawk flight controller using the MAVLink protocol over a serial connection (Pixhawk's TELEM2 port <--> RPi's Ground, TX and RX pins), which is [this configuration](http://ardupilot.org/dev/docs/raspberry-pi-via-mavlink.html).
+Current setup: DroneKit runs on a Raspberry Pi onboard the drone itself. The RPi communicates with the Pixhawk flight controller using the MAVLink protocol over a serial connection (Pixhawk's TELEM2 port <--> RPi's Ground, TX and RX pins), which is [this configuration](http://ardupilot.org/dev/docs/raspberry-pi-via-mavlink.html).
 
   - process to communicate from ground to RPi: SSH, type in commands.
 
@@ -72,18 +72,37 @@ DroneKit-SITL waits for TCP connections on `127.0.0.1:5760`. DroneKit-Python scr
 
   - cannot observe .home_location.
 
+#### 11.10.2018
 
+##### State information
 
+These are the states we will likely need to work with.
 
+`system_status.state` - one of the following values:
 
+- `UNINIT`: Uninitialized system, state is unknown.
+- `BOOT`: System is booting up.
+- `CALIBRATING`: System is calibrating and not flight-ready.
+- `STANDBY`: System is grounded and on standby. It can be launched any time.
+- `ACTIVE`: System is active and might be already airborne. Motors are engaged.
+- `CRITICAL`: System is in a non-normal flight mode. It can, however, still navigate.
+- `EMERGENCY`: System is in a non-normal flight mode. It lost control over parts or over the whole airframe. It is in mayday and going down.
+- `POWEROFF`: System just initialized its power-down sequence.
 
+The states we will use most often are `STANDBY` and `ACTIVE`, as the others are quicker transitions and have to do with flight preparations.
 
+`mode` - flight mode of drone. This should be `AUTO` for waypoint missions, and `GUIDED` otherwise.
 
+`is_armable` - True/False. This attribute wraps a number of pre-arm checks, ensuring that the drone has booted, has a good GPS fix, and that the EKF pre-arm is complete.
 
+`armed` - True/False
 
+`last_heartbeat` - Time since last MAVLink heartbeat was received, in seconds. This attribute can be used to monitor link activity and implement script-specific timeout handling.
 
+`location.global_frame`, `location.global_relative_frame`, `location.local_frame` - These attributes can be used to determine the drone's position.
+`home_location` - starting position of drone.
 
-
+`groundspeed` and `airspeed` - Determine drone's speed.
 
 
 
