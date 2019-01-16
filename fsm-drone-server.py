@@ -69,13 +69,26 @@ class StateMachine:
       print '  ERROR: not in state to receive LAND from drone. Doing nothing.'
 
   def timeout(self):
-    self.transition(self.get_previous_state())
+    if self.get_current_state() == 'STANDBY':
+      self.transition('OFF')
+    elif self.get_current_state() == 'WAIT_FOR_ACK':
+      self.transition('STANDBY')
+    elif self.get_current_state() == 'WAIT_FOR_ARM':
+      self.transition('STANDBY')
+    elif self.get_current_state() == 'ARMED_NOT_IN_FLIGHT':
+      self.transition('WAIT_FOR_ARM')
+    elif self.get_current_state() == 'WAIT_FOR_CMD':
+      self.transition('ARMED_NOT_IN_FLIGHT')
+    else:
+      print '  ERROR: not in state to timeout. Doing nothing.'
 
 if __name__== "__main__":
   fsm = StateMachine()
   accepted = False
 
   while not accepted:
+
+    print '\nCurrent state: ' + fsm.get_current_state() + '\n'
 
     print 'Available events:'
     print '1) Send ACK to client.'
@@ -88,9 +101,6 @@ if __name__== "__main__":
     input = raw_input('Enter the number of an event: ')
     # print '  Received: ' + input
     # print '  Current state: ' + fsm.get_current_state()
-    if fsm.get_current_state() == 'OFF':
-      print '-- Accept state reached. Exiting.'
-      break
 
     if input == 'quit':
       print '-- Quitting.'
@@ -124,4 +134,6 @@ if __name__== "__main__":
       print '  EVENT: Timeout.'
       fsm.timeout()
 
-    print '\nCurrent state: ' + fsm.get_current_state() + '\n'
+    if fsm.get_current_state() == 'OFF':
+      print '-- Accept state reached. Exiting.'
+      break
