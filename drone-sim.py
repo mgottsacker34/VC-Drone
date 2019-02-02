@@ -46,7 +46,7 @@ Handshake = 'HSK'
 Quit = 'QUT'
 Reply = 'RPL'
 
-Order = 'order'
+Command = 'command'
 
 # Reply status
 replyRetry = 'RETRY'
@@ -149,9 +149,9 @@ try:
           sock.sendall(handshakeMessage())
           continue
       else:
-        if buff[0] == Order:
+        if buff[0] == Command:
           cmdList = buff[2].split(splitter2)
-          print 'Orders received: ', cmdList
+          print 'Commands received: ', cmdList
           for cmd in cmdList:
             if len(cmd) > 0:
               print 'cmd: ' + cmd
@@ -161,7 +161,7 @@ try:
                 drone_disarm()
               elif cmd == 'cmd take off':
                 drone_takeoff()
-          sock.sendall(stringifyBufferedMsg([Reply, buff[1], replySuccess, 'Orders processed'],splitter))
+          sock.sendall(stringifyBufferedMsg([Reply, buff[1], replySuccess, 'Commands processed'],splitter))
 
 except KeyboardInterrupt:
   print '\nCaught Ctrl+C -- killing subprocesses...'

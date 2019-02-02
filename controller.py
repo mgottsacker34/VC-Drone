@@ -1,9 +1,3 @@
-#################################################
-###  VC-Drone Client            ###
-###                       ###
-### St Louis University, Computer Science Dep.###
-###                       ###
-#################################################
 import socket
 import sys
 
@@ -25,7 +19,7 @@ Identity = 'Controller'
 Name = 'C1'
 
 #ACTIONS#
-Order = 'order'
+Command = 'command'
 SyncList = 'sync list'
 
 #NOTATION#
@@ -44,7 +38,7 @@ replySuccess = 'SUCCESS'
 replyFail = 'FAIL'
 
 #Content Type
-Order = 'order'
+Command = 'command'
 #Update = 'update'
 
 #####HELPER FUNCTIONS####
@@ -84,18 +78,18 @@ def actionMessage():
   action =''
   #while action != Create and action != Alter  and action != Execute and action != 'quit' and action!=SyncList:
   while inp != 'o' and inp != 'q': #and inp != 'u':
-    inp = raw_input('Enter \'o\' to order, or \'q\' to quit: ')
+    inp = raw_input('Enter \'o\' to command, or \'q\' to quit: ')
     if inp == 'o':
-      action = Order
+      action = Command
     elif inp == 'q':
       action = Quit
   #print action
   if action == Quit:
     return QUT
-  elif action == Order:# or action ==  Update:
+  elif action == Command:# or action ==  Update:
     targetDrone = raw_input('Enter target drone\'s name: ')
-    targetOrder = raw_input('Enter desired action: ')
-    return stringifyBufferedMsg([Action,action,targetDrone,targetOrder], splitter)
+    targetCommand = raw_input('Enter desired action: ')
+    return stringifyBufferedMsg([Action,action,targetDrone,targetCommand], splitter)
 
 def actionRetry(warning):
   print '--Server message--'
@@ -141,8 +135,8 @@ while True:
         ###LISTEN FOR Action Message Reply###
         ##Action Type, ContentType, Reply Type, Result/Warning
         elif buff[0]== Reply:
-          if buff[1]== Order :
-            print 'Received:Order Reply: '
+          if buff[1]== Command :
+            print 'Received:Command Reply: '
             #print message
             if buff[2]== replyRetry:
               sock.sendall(actionRetry(buff[3]))
@@ -155,7 +149,7 @@ while True:
               break
 
             continue
-          elif buff[1]==Order:
+          elif buff[1]==Command:
             printResult(buff[4])
             sock.sendall(actionMessage())
             continue
