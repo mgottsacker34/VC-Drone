@@ -30,7 +30,7 @@ will be the first argument given with the Python program name.
 
 For example:
 
-`python simple-server.py 10000`
+`python server.py 10000`
 
 `python drone-sim.py 10000`
 
@@ -45,4 +45,4 @@ Enter the drone's name. In the simulated case, this is hard-coded as `D1`.
 Enter a command. Observe the simulated drone flying data from the `drone-sim`
 program.
 
-An example sequence of commands is `arm`, `take off`, `land`, `disarm`.
+An example sequence of commands is `arm`, `take off`, `land`, `disarm`, `quit`.

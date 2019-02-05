@@ -43,11 +43,11 @@ Command = 'command'
 
 #####HELPER FUNCTIONS####
 
-def stringifyBufferedMsg(list,splitter):
+def stringifyBufferedMsg(list, splitter):
   #put list of items into a string with splitters
   temp=''
   for i in list:
-    temp = temp+i + splitter
+    temp = temp + i + splitter
   return temp[:-len(splitter)]
 
 def handshakeMessage():
@@ -83,10 +83,9 @@ def actionMessage():
       action = Command
     elif inp == 'q':
       action = Quit
-  #print action
   if action == Quit:
     return QUT
-  elif action == Command:# or action ==  Update:
+  elif action == Command:
     targetDrone = raw_input('Enter target drone\'s name: ')
     targetCommand = raw_input('Enter desired action: ')
     return stringifyBufferedMsg([Action,action,targetDrone,targetCommand], splitter)
@@ -101,7 +100,6 @@ while True:
   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
   sock.connect(server_address)
-  #stringifyBufferedMsg('a','b')
 
   #Sending handshake message
   HasBeenHandshake = False
